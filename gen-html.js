@@ -23,6 +23,16 @@ class HtmlElement {
 
     return this.load(json);
   }
+  
+  appendChild(){
+    //if the argument provided is an HtmlElement, it is appended as is
+    //otherwise the HtmlElement constructor will be called using the same arguments as appendChild.
+    //the newly created HtmlElement will then be appended.
+    let element = (arguments[0] instanceof HtmlElement) ? arguments[0] : new HtmlElement(...arguments);
+    this.content.push(element);
+    
+    return this;
+  }
 
   load(json){
     //json: has three keys
@@ -46,7 +56,7 @@ class HtmlElement {
       }
     }
 
-    console.log(content)
+    console.log('loaded content', content, typeof content)
 
     this.content = content.map((element) => {
       if (typeof element === 'string'){
@@ -54,7 +64,7 @@ class HtmlElement {
       } else {
         return new HtmlElement(element)  
       }
-    }).join('');
+    });
     this.tag = json.tag;
     this.attributes = json.attributes;
 
@@ -66,8 +76,10 @@ class HtmlElement {
     for (let key in this.attributes){
       aAttributes.push(`${key}="${this.attributes[key]}"`);
     }
-    
-    let result = `<${this.tag} ${aAttributes.join(' ')}>${this.content}</${this.tag}>`
+    let content = this.content.map((contentItem) => {
+      return contentItem.toString()
+    }).join('')
+    let result = `<${this.tag} ${aAttributes.join(' ')}>${content}</${this.tag}>`
     
     return result;
   }
@@ -86,6 +98,16 @@ let heJson = {
     }
   ]
 }
-// let he = new HtmlElement('div', { 'class': 'brown bold', 'id': '1234' }, 'dadadd');
-let he = new HtmlElement(heJson)
-console.log(he.toString())
+
+class HtmlDocument {
+  constructor(){
+    this.html = new HtmlElement('html');
+  }
+  
+  toString(){
+    let result = '<!DOCTYPE html>';
+    
+    return result;
+  }
+} 
+// let hDoc = new HtmlDocument()
