@@ -2,6 +2,7 @@ class HtmlElement {
   constructor(){
     //HtmlElement can be two types: has a tag, optional attributes and content, OR a string value WITHOUT tag and attributes
     //arguments provided are converted to a json object to be loaded
+    console.log('HtmlElement constructor', ...arguments)
     let json = {};
     if (arguments.length === 1){
       //case 1: one argument is provided
@@ -43,20 +44,15 @@ class HtmlElement {
     //start by processing content
     //if it is not an array, make it so
     let content;
-    console.log('LOAD', json.content, json.content instanceof Array)
     if (json.content instanceof Array){
       content = json.content;
     } else {
       if (json.content){
         content = [json.content];
-        console.log('has content', content)
       } else {
         content = [];
-        console.log('no content', content)
       }
     }
-
-    console.log('loaded content', content, typeof content)
 
     this.content = content.map((element) => {
       if (typeof element === 'string'){
@@ -79,11 +75,34 @@ class HtmlElement {
     let content = this.content.map((contentItem) => {
       return contentItem.toString()
     }).join('')
-    let result = `<${this.tag} ${aAttributes.join(' ')}>${content}</${this.tag}>`
+    let sAttributes = (aAttributes.length === 0) ? '' : ' '+aAttributes.join(' ')
+    let result = `<${this.tag}${sAttributes}>${content}</${this.tag}>`
     
     return result;
   }
 }
+
+class HtmlString extends HtmlElement {
+  constructor(s){
+    
+  }
+}
+
+class HtmlTag extends HtmlElement {
+  constructor(){
+    if (arguments.length === 1){
+      console.log('eee')
+      super({
+        tag: arguments[0]
+      });
+      console.log('fff')
+    } else {
+      super(...arguments);
+    }
+    this.type = 'tag';
+  }
+}
+
 let heJson = {
   'tag': 'div',
   'attributes': {
@@ -98,16 +117,29 @@ let heJson = {
     }
   ]
 }
+// let he = new HtmlElement('div', { 'class': 'brown bold', 'id': '1234' }, 'dadadd');
+// let he = new HtmlElement(heJson)
+// he.appendChild(new HtmlElement({
+//   'tag': 'span',
+//   'content': 'Just some text here!'
+// }))
 
 class HtmlDocument {
   constructor(){
-    this.html = new HtmlElement('html');
+    this.html = new HtmlTag('html');
+    this.head = new HtmlTag('head');
+    this.body = new HtmlTag('body');
+    
+    this.html.appendChild(this.head);
+    this.html.appendChild(this.body);
   }
   
   toString(){
     let result = '<!DOCTYPE html>';
+    result += this.html.toString();
     
     return result;
   }
-} 
-// let hDoc = new HtmlDocument()
+}
+let hDoc = new HtmlDocument()
+console.log(hDoc+'')
