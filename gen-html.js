@@ -134,6 +134,19 @@ class HtmlDocument {
     this.html.appendChild(this.body);
   }
   
+  appendScript(content, place){
+    if (typeof place === 'undefined'){
+      place = this.head;
+    }
+    place.appendChild({
+      'tag': 'script',
+      'attributes': {
+        'type': 'text/javascript'
+      },
+      content: content
+    })      
+  }
+  
   toString(){
     let result = '<!DOCTYPE html>';
     result += this.html.toString();
@@ -142,4 +155,5 @@ class HtmlDocument {
   }
 }
 let hDoc = new HtmlDocument()
+hDoc.appendScript('console.log("lalala")')
 console.log(hDoc+'')
